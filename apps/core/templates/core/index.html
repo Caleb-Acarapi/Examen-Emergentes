@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}MediControl — Panel de Control{% endblock %}
+
+{% block content %}
+<style>
+    /* ===== Custom Variables & Refined Styles ===== */
+    :root {
+        --accent: #00d4aa;
+        --accent-glow: rgba(0, 212, 170, 0.3);
+        --accent-dark: #00b894;
+        --surface: #1e1e2f;
+        --surface-alt: #252540;
+        --text-primary: #f8f9fa;
+        --text-muted: #94a3b8;
+        --border: rgba(255, 255, 255, 0.08);
+        --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-container {
+        padding: 3rem 0;
+        position: relative;
+    }
+
+    .welcome-text h1 {
+        font-weight: 800;
+        font-size: 3.5rem;
+        letter-spacing: -1px;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, var(--text-muted));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .welcome-text p {
+        font-size: 1.15rem;
+        color: var(--text-muted);
+        max-width: 550px;
+        line-height: 1.6;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1.25rem;
+        background: rgba(0, 212, 170, 0.1);
+        border: 1px solid rgba(0, 212, 170, 0.2);
+        border-radius: 100px;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 2rem;
+    }
+
+    .pulse {
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        margin-right: 10px;
+        box-shadow: 0 0 0 rgba(0, 212, 170, 0.4);
+        animation: pulse-animation 2s infinite;
+    }
+
+    @keyframes pulse-animation {
+        0% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(0, 212, 170, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0); }
+    }
+
+    /* Dashboard Cards */
+    .dashboard-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 2rem;
+        height: 100%;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(0, 212, 170, 0.3);
+        box-shadow: var(--card-shadow);
+    }
+
+    .card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .icon-medicos { background: rgba(0, 212, 170, 0.1); color: var(--accent); }
+    .icon-pacientes { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+    .icon-citas { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
+
+    .card-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+
+    .card-label {
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    /* Appointment Preview */
+    .preview-list {
+        background: var(--surface-alt);
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+    }
+
+    .preview-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .preview-item:last-child { border-bottom: none; }
+
+    .preview-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: #121212;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-right: 1rem;
+    }
+
+    .preview-info h6 { margin: 0; font-weight: 700; }
+    .preview-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+
+    .preview-time {
+        margin-left: auto;
+        font-weight: 600;
+        color: var(--accent);
+        font-size: 0.9rem;
+    }
+
+    .btn-action {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        color: #fff;
+        padding: 0.8rem 1.5rem;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-action:hover {
+        background: var(--accent);
+        color: #121212;
+        border-color: var(--accent);
+        transform: translateY(-2px);
+    }
+
+    /* Glassmorphism Quick Links */
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 3rem;
+    }
+
+    .link-item {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        padding: 1.5rem;
+        border-radius: 20px;
+        text-decoration: none;
+        color: #fff;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .link-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--accent);
+        color: #fff;
+    }
+
+    .link-item i {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--accent);
+    }
+
+    .link-item span {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .link-item small {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="hero-container">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+            <div class="status-badge">
+                <div class="pulse"></div>
+                Sistema Operativo — 2026
+            </div>
+            <div class="welcome-text">
+                <h1 id="greeting">Hola, Bienvenido</h1>
+                <p>Gestiona tu centro médico con eficiencia. Control total sobre médicos, pacientes y agendas en una plataforma moderna e intuitiva.</p>
+            </div>
+            
+            <div class="d-flex gap-3 mt-4">
+                <a href="{{ url_for('bp_citas.listar') }}" class="btn btn-accent px-4 py-3 rounded-4 fw-bold">
+                    <i class="bi bi-calendar-plus me-2"></i>Nueva Cita
+                </a>
+                <a href="#quick-stats" class="btn btn-outline-light px-4 py-3 rounded-4 fw-bold">
+                    <i class="bi bi-bar-chart me-2"></i>Ver Reportes
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="preview-list shadow-lg">
+                <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                    <h5 class="mb-0 fw-bold">Próximas Citas</h5>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">Hoy</span>
+                </div>
+                
+                {% if proximas_citas %}
+                    {% for cita in proximas_citas %}
+                    <div class="preview-item">
+                        <div class="preview-avatar">
+                            {{ cita.paciente.nombre[:2].upper() }}
+                        </div>
+                        <div class="preview-info">
+                            <h6>{{ cita.paciente.nombre }}</h6>
+                            <p>{{ cita.medico.nombre }} — {{ cita.medico.especialidad }}</p>
+                        </div>
+                        <div class="preview-time">
+                            {{ cita.hora.strftime('%H:%M') }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-x text-muted display-6 mb-3 d-block"></i>
+                        <p class="text-muted small">No hay citas programadas para hoy</p>
+                    </div>
+                {% endif %}
+                
+                <a href="{{ url_for('bp_citas.listar') }}" class="btn w-100 mt-3 btn-action">
+                    Ver todas las citas <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="quick-stats" class="row g-4 mt-5">
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <div class="card-icon icon-medicos">
+                <i class="bi bi-person-vcard"></i>
+            </div>
+            <div class="card-value counter" data-target="{{ medicos_count }}">0</div>
+            <div class="card-label">Médicos Especialistas</div>
+            <div class="mt-4">
+                <a href="{{ url_for('bp_medicos.listar') }}" class="text-decoration-none small fw-bold text-accent">
+                    Gestionar Directorio <i class="bi bi-chevron-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <div class="card-icon icon-pacientes">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="card-value counter" data-target="{{ pacientes_count }}">0</div>
+            <div class="card-label">Pacientes Registrados</div>
+            <div class="mt-4">
+                <a href="{{ url_for('bp_pacientes.listar') }}" class="text-decoration-none small fw-bold text-accent" style="color: #6366f1 !important;">
+                    Ver Expedientes <i class="bi bi-chevron-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <div class="card-icon icon-citas">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="card-value counter" data-target="{{ citas_count }}">0</div>
+            <div class="card-label">Citas en el Sistema</div>
+            <div class="mt-4">
+                <a href="{{ url_for('bp_citas.listar') }}" class="text-decoration-none small fw-bold text-accent" style="color: #f43f5e !important;">
+                    Calendario Completo <i class="bi bi-chevron-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="quick-links">
+    <a href="{{ url_for('bp_medicos.listar') }}" class="link-item">
+        <i class="bi bi-plus-square-fill"></i>
+        <span>Alta de Médicos</span>
+        <small>Registrar nuevos profesionales</small>
+    </a>
+    <a href="{{ url_for('bp_pacientes.listar') }}" class="link-item">
+        <i class="bi bi-person-plus-fill"></i>
+        <span>Nuevo Paciente</span>
+        <small>Añadir a la base de datos</small>
+    </a>
+    <a href="{{ url_for('bp_citas.listar') }}" class="link-item">
+        <i class="bi bi-clock-history"></i>
+        <span>Historial de Citas</span>
+        <small>Consultar registros pasados</small>
+    </a>
+    <a href="/" class="link-item">
+        <i class="bi bi-gear-fill"></i>
+        <span>Configuración</span>
+        <small>Ajustes del sistema</small>
+    </a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Greeting based on time
+        const hour = new Date().getHours();
+        const greetingEl = document.getElementById('greeting');
+        if (hour < 12) greetingEl.textContent = 'Buenos Días';
+        else if (hour < 18) greetingEl.textContent = 'Buenas Tardes';
+        else greetingEl.textContent = 'Buenas Noches';
+
+        // Animate counters
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            const duration = 1500;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(progress * target);
+                counter.textContent = current;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        });
+    });
+</script>
+{% endblock %}

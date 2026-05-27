@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Cita — MediControl{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2 class="mb-0"><i class="bi bi-pencil-square me-2" style="color: #00d4aa;"></i>Editar Cita</h2>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <form action="{{ url_for('bp_citas.editar', id=cita.id) }}" method="POST" id="formEditarCita">
+                    <div class="mb-3">
+                        <label for="fecha" class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" value="{{ cita.fecha }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hora" class="form-label">Hora</label>
+                        <input type="time" class="form-control" id="hora" name="hora" value="{{ cita.hora }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="medico_id" class="form-label">Médico</label>
+                        <select class="form-select" id="medico_id" name="medico_id" required>
+                            <option value="" disabled>Seleccione un médico</option>
+                            {% for medico in medicos %}
+                            <option value="{{ medico.id }}" {% if medico.id == cita.medico_id %}selected{% endif %}>
+                                {{ medico.nombre }} — {{ medico.especialidad }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="paciente_id" class="form-label">Paciente</label>
+                        <select class="form-select" id="paciente_id" name="paciente_id" required>
+                            <option value="" disabled>Seleccione un paciente</option>
+                            {% for paciente in pacientes %}
+                            <option value="{{ paciente.id }}" {% if paciente.id == cita.paciente_id %}selected{% endif %}>
+                                {{ paciente.nombre }} — {{ paciente.telefono }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-accent">
+                            <i class="bi bi-check-lg me-1"></i>Actualizar
+                        </button>
+                        <a href="{{ url_for('bp_citas.listar') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

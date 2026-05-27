@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Pacientes — MediControl{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center page-header">
+    <h2 class="mb-0"><i class="bi bi-people me-2" style="color: #00d4aa;"></i>Pacientes</h2>
+    <a href="{{ url_for('bp_pacientes.crear') }}" class="btn btn-accent">
+        <i class="bi bi-plus-lg me-1"></i>Nuevo Paciente
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tablaPacientes">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paciente in pacientes %}
+                    <tr>
+                        <td>{{ paciente.id }}</td>
+                        <td>
+                            <i class="bi bi-person me-1" style="color: #00d4aa;"></i>
+                            {{ paciente.nombre }}
+                        </td>
+                        <td>
+                            <i class="bi bi-telephone me-1 text-muted"></i>
+                            {{ paciente.telefono }}
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('bp_pacientes.editar', id=paciente.id) }}" class="btn btn-sm btn-outline-accent me-1" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form action="{{ url_for('bp_pacientes.eliminar', id=paciente.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Está seguro de eliminar este paciente?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No hay pacientes registrados
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

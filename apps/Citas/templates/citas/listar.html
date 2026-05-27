@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Citas Médicas — MediControl{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center page-header">
+    <h2 class="mb-0"><i class="bi bi-calendar-check me-2" style="color: #00d4aa;"></i>Citas Médicas</h2>
+    <a href="{{ url_for('bp_citas.crear') }}" class="btn btn-accent">
+        <i class="bi bi-plus-lg me-1"></i>Nueva Cita
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tablaCitas">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Médico</th>
+                        <th>Paciente</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas %}
+                    <tr>
+                        <td>{{ cita.id }}</td>
+                        <td>
+                            <i class="bi bi-calendar3 me-1 text-muted"></i>
+                            {{ cita.fecha.strftime('%d/%m/%Y') }}
+                        </td>
+                        <td>
+                            <i class="bi bi-clock me-1 text-muted"></i>
+                            {{ cita.hora.strftime('%H:%M') }}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-person-badge me-1"></i>{{ cita.medico.nombre }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-dark border">
+                                <i class="bi bi-person me-1"></i>{{ cita.paciente.nombre }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('bp_citas.editar', id=cita.id) }}" class="btn btn-sm btn-outline-accent me-1" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form action="{{ url_for('bp_citas.eliminar', id=cita.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Está seguro de eliminar esta cita?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No hay citas registradas
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
