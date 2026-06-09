@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Cuenta — MediControl{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+        <div class="card shadow-lg" style="border: 1px solid #2a2a3d; border-radius: 16px; background-color: #1e1e2f;">
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-plus-fill" style="font-size: 2.8rem; color: #00d4aa;"></i>
+                    </div>
+                    <h1 class="h3 fw-bold mb-1" style="color: #e0e0e0;">Crear Cuenta</h1>
+                    <p class="text-muted small">Regístrate para acceder al sistema</p>
+                </div>
+
+                <!-- Form -->
+                <form method="POST" autocomplete="off">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person me-1" style="color: #00d4aa;"></i>Nombre de Usuario
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="username"
+                            name="username"
+                            placeholder="Ingresa un nombre de usuario"
+                            required
+                            autofocus
+                        >
+                        <div class="form-text" style="color: #666;">Este será tu identificador en el sistema.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock me-1" style="color: #00d4aa;"></i>Contraseña
+                        </label>
+                        <div class="input-group">
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password"
+                                name="password"
+                                placeholder="••••••••"
+                                required
+                            >
+                            <button
+                                class="btn"
+                                type="button"
+                                id="togglePassword"
+                                style="background-color: #252540; border: 1px solid #2a2a3d; color: #b0b0b0;"
+                                onclick="togglePasswordVisibility()"
+                            >
+                                <i class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-accent py-2 fw-semibold" id="btn-register">
+                            <i class="bi bi-person-check me-2"></i>Registrarse
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Divider -->
+                <div class="d-flex align-items-center my-3">
+                    <hr class="flex-grow-1" style="border-color: #2a2a3d;">
+                    <span class="px-3 text-muted small">o</span>
+                    <hr class="flex-grow-1" style="border-color: #2a2a3d;">
+                </div>
+
+                <!-- Login link -->
+                <div class="d-grid">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-accent py-2">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Ya tengo una cuenta
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+</script>
+{% endblock %}
