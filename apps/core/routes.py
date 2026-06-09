@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template
+from flask_login import login_required
 from apps.Medicos.models import Medico
 from apps.Pacientes.models import Paciente
 from apps.Citas.models import Cita
@@ -7,6 +8,7 @@ bp_core = Blueprint("bp_core", __name__, template_folder="templates")
 
 
 @bp_core.route("/")
+@login_required
 def index():
     medicos_count = Medico.query.count()
     pacientes_count = Paciente.query.count()

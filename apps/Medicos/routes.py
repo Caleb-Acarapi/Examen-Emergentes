@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, url_for, redirect
+from flask_login import login_required
 from apps.app import db
 from apps.Medicos.models import Medico
 
@@ -6,12 +7,14 @@ bp_medicos = Blueprint("bp_medicos", __name__, template_folder="templates")
 
 
 @bp_medicos.route("/")
+@login_required
 def listar():
     medicos = Medico.query.all()
     return render_template("medicos/listar.html", medicos=medicos)
 
 
 @bp_medicos.route("/create", methods=["GET", "POST"])
+@login_required
 def crear():
     if request.method == "POST":
         nombre = request.form["nombre"]
@@ -24,6 +27,7 @@ def crear():
 
 
 @bp_medicos.route("/edit/<int:id>", methods=["GET", "POST"])
+@login_required
 def editar(id):
     medico = Medico.query.get(id)
     if request.method == "POST":
@@ -35,6 +39,7 @@ def editar(id):
 
 
 @bp_medicos.route("/delete/<int:id>", methods=["POST"])
+@login_required
 def eliminar(id):
     medico = Medico.query.get(id)
     db.session.delete(medico)

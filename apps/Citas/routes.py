@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, url_for, redirect
+from flask_login import login_required
 from apps.app import db
 from apps.Citas.models import Cita
 from apps.Medicos.models import Medico
@@ -8,12 +9,14 @@ bp_citas = Blueprint("bp_citas", __name__, template_folder="templates")
 
 
 @bp_citas.route("/")
+@login_required
 def listar():
     citas = Cita.query.all()
     return render_template("citas/listar.html", citas=citas)
 
 
 @bp_citas.route("/create", methods=["GET", "POST"])
+@login_required
 def crear():
     if request.method == "POST":
         from datetime import datetime
@@ -39,6 +42,7 @@ def crear():
 
 
 @bp_citas.route("/edit/<int:id>", methods=["GET", "POST"])
+@login_required
 def editar(id):
     cita = Cita.query.get(id)
     if request.method == "POST":
@@ -56,6 +60,7 @@ def editar(id):
 
 
 @bp_citas.route("/delete/<int:id>", methods=["POST"])
+@login_required
 def eliminar(id):
     cita = Cita.query.get(id)
     db.session.delete(cita)
